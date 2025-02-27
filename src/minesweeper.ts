@@ -1,14 +1,52 @@
 import { ref, type Ref } from 'vue'
 import { TileState, type Tile } from './types/tileTypes'
 
+const DIRECTIONS = [
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+  [-1, 0],
+  [1, 0],
+  [-1, 1],
+  [0, 1],
+  [1, 1],
+]
+
 export class Minesweeper {
-  public grid: Ref<Tile[][]> = ref([])
+  public grid: Tile[][] = []
+  public clearedTiles: number = 0
 
   public constructor(
     private height: number,
     private width: number,
     private mineCount: number,
   ) {
+    this.startNewGame()
+  }
+
+  public revealMine(tile: Tile) {
+    tile.state = TileState.Revealed
+  }
+
+  public revealTileRecursive(tile: Tile) {
+    if (tile.state === TileState.Hidden) {
+      tile.state = TileState.Revealed
+      this.clearedTiles++
+      if (tile.adjacentMines != 0) {
+        return
+      }
+
+      DIRECTIONS.forEach(([dx, dy]) => {
+        let nx: number = tile.x + dx
+        let ny: number = tile.y + dy
+        if (this.coordinatesInRange(nx, ny)) {
+          this.revealTileRecursive(this.grid[ny][nx])
+        }
+      })
+    }
+  }
+
+  private startNewGame() {
     this.generateGrid()
     this.placeMines()
     this.calculateAdjacent()
@@ -32,7 +70,7 @@ export class Minesweeper {
       }
     }
 
-    this.grid.value = grid
+    this.grid = grid
   }
 
   private placeMines(): void {
@@ -42,7 +80,7 @@ export class Minesweeper {
       let x: number = Math.floor(Math.random() * this.width)
       let y: number = Math.floor(Math.random() * this.height)
 
-      let tile: Tile = this.grid.value[y][x]
+      let tile: Tile = this.grid[y][x]
       if (!tile.hasMine) {
         placedMines++
         tile.hasMine = true
@@ -51,28 +89,21 @@ export class Minesweeper {
   }
 
   private calculateAdjacent(): void {
-    const directions = [
-      [-1, -1],
-      [0, -1],
-      [1, -1],
-      [-1, 0],
-      [1, 0],
-      [-1, 1],
-      [0, 1],
-      [1, 1],
-    ]
-
-    this.grid.value.forEach((array) => {
+    this.grid.forEach((array) => {
       array.forEach((tile) => {
-        tile.adjacentMines = directions.reduce((n, [dx, dy]) => {
-          let x: number = tile.x + dx
-          let y: number = tile.y + dy
-          if (x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) {
-            return n
+        tile.adjacentMines = DIRECTIONS.reduce((n, [dx, dy]) => {
+          let nx: number = tile.x + dx
+          let ny: number = tile.y + dy
+          if (this.coordinatesInRange(nx, ny)) {
+            return n + (this.grid[ny][nx].hasMine ? 1 : 0)
           }
-          return n + (this.grid.value[x][y].hasMine ? 1 : 0)
+          return n
         }, 0)
       })
     })
+  }
+
+  private coordinatesInRange(x: number, y: number): boolean {
+    return x >= 0 && x < this.width && y >= 0 && y < this.height
   }
 }
