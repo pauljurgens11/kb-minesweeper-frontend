@@ -1,13 +1,17 @@
 <template>
   <PopupMenu
-    :isOpen=!gameActive
-    :options="[{ label: 'New Game', action: 'select1' }]"
-    @select="resetGame()"
+    :isOpen="!gameActive"
+    :options="[{ label: 'New Game', action: 'select' }]"
+    @select="startGame()"
   />
 
   <div v-if="minesweeper" class="grid">
     <div v-for="row in minesweeper.grid" :key="row[0].y" class="row">
-      <div v-for="tile in row" :key="tile.x" class="tile" @click="revealTile(tile)">
+      <div v-for="tile in row"
+        :key="tile.x"
+        class="tile" 
+        :class="{ 'cursor': cursor.x === tile.x && cursor.y === tile.y }"
+        @click="revealTile(tile.x, tile.y)">
         {{ tile.state === TileState.Revealed ? (tile.hasMine ? '💣' : tile.adjacentMines) : ' ' }}
       </div>
     </div>
@@ -18,76 +22,104 @@
 
 <script setup lang="ts">
 import PopupMenu from './PopupMenu.vue'
-import { Minesweeper } from '@/minesweeper'
+import { Minesweeper } from '@/composables/minesweeper'
+import { useTimer } from '@/composables/timer'
 import { TileState, type Tile } from '@/types/tileTypes'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const minesweeper = ref<Minesweeper | null>(null)
+const { formattedTime, startTimer, stopTimer, resetTimer } = useTimer()
+
 let gameActive = true
-
-const time = ref(0)
-let timerInterval: ReturnType<typeof setInterval> | null = null
-
-function startTimer() {
-  stopTimer()
-  time.value = 0
-  timerInterval = setInterval(() => {
-    time.value += 10
-  }, 10)
-}
-
-function stopTimer() {
-  if (timerInterval) {
-    clearInterval(timerInterval)
-    timerInterval = null
-  }
-}
+let startTimerOnNextClick = true
+const cursor = ref({x: 0, y: 0})
 
 onMounted(() => {
   try {
-    resetGame()
+    startGame()
+    window.addEventListener('keydown', handleKeydown)
   } catch (error) {
     console.error('Error initializing Minesweeper:', error)
   }
 })
 
-function resetGame() {
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown)
+  stopTimer()
+})
+
+
+function startGame() {
   gameActive = true
-  minesweeper.value = new Minesweeper(10, 10, 3)
-  startTimer()
+  minesweeper.value = new Minesweeper(10, 10, 15) // TODO:
+  resetTimer()
 }
 
-function revealTile(tile: Tile) {
-  if (minesweeper && gameActive) {
-    if (tile.hasMine) {
-      minesweeper.value!.revealMine(tile)
-      gameActive = false
-      stopTimer()
-    }
-    minesweeper.value!.revealTileRecursive(tile)
+function endGame() {
+  gameActive = false
+  startTimerOnNextClick = true
+  stopTimer()
+}
 
-    if (minesweeper.value!.clearedTiles == 97) {
-      gameActive = false
-      stopTimer()
-    }
+function revealTile(x: number, y: number) {
+  if (!minesweeper || !gameActive) return
+
+  if (startTimerOnNextClick) {
+    startTimer()
+    startTimerOnNextClick = false
+  }
+
+  // End game if tile has a bomb or all tiles are cleared.
+  if (minesweeper.value!.revealTileAndCheckForMine(x, y) || minesweeper.value!.clearedTiles == 85) { // TODO:
+    endGame()
   }
 }
 
-const formattedTime = computed(() => {
-  const minutes = Math.floor(time.value / 60000).toString().padStart(2, '0')
-  const seconds = Math.floor((time.value % 60000) / 1000).toString().padStart(2, '0')
-  const milliseconds = (time.value % 1000).toString().padStart(3, '0')
-  return `${minutes}:${seconds}:${milliseconds}`
-})
+// Handle cursor movement with arrow keys
+function handleKeydown(event: KeyboardEvent) {
+  if (!minesweeper) return
+
+  event.preventDefault()
+
+  switch (event.key) {
+    case 'r':
+      startGame()
+  }
+
+  if (!gameActive) return
+
+  switch (event.key) {
+    case 'ArrowUp':
+    case 'k':
+      cursor.value.y = Math.max(0, cursor.value.y - 1)
+      break
+    case 'ArrowDown':
+    case 'j':
+      cursor.value.y = Math.min(10 - 1, cursor.value.y + 1) // 10 is heigh TODO:
+      break
+    case 'ArrowLeft':
+    case 'h':
+      cursor.value.x = Math.max(0, cursor.value.x - 1)
+      break
+    case 'ArrowRight':
+    case 'l':
+      cursor.value.x = Math.min(10 - 1, cursor.value.x + 1) // 10 is width TODO:
+      break
+    case ' ':
+      revealTile(cursor.value.x, cursor.value.y)
+      break
+  }
+}
 </script>
 
 <style scoped>
 .grid {
   display: grid;
-  gap: 2px;
+  gap: 1px;
 }
 .row {
   display: flex;
+  gap: 1px;
 }
 .tile {
   width: 30px;
@@ -97,5 +129,10 @@ const formattedTime = computed(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.tile.cursor {
+  border: 1px solid red;
+  background-color: rgba(255, 0, 0, 0.1);
 }
 </style>

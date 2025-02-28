@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue'
-import { TileState, type Tile } from './types/tileTypes'
+import { TileState, type Tile } from '../types/tileTypes'
 
 const DIRECTIONS = [
   [-1, -1],
@@ -14,7 +14,7 @@ const DIRECTIONS = [
 
 export class Minesweeper {
   public grid: Tile[][] = []
-  public clearedTiles: number = 0
+  public clearedTiles = 0
 
   public constructor(
     private height: number,
@@ -24,27 +24,32 @@ export class Minesweeper {
     this.startNewGame()
   }
 
-  public revealMine(tile: Tile) {
-    tile.state = TileState.Revealed
-  }
+  public revealTileAndCheckForMine(x: number, y: number): boolean {
+    let tile = this.grid[y][x]
 
-  public revealTileRecursive(tile: Tile) {
     if (tile.state === TileState.Hidden) {
       tile.state = TileState.Revealed
+      if (tile.hasMine) {
+        return true
+      }
+
       this.clearedTiles++
       if (tile.adjacentMines != 0) {
-        return
+        return false
       }
 
       DIRECTIONS.forEach(([dx, dy]) => {
         let nx: number = tile.x + dx
         let ny: number = tile.y + dy
         if (this.coordinatesInRange(nx, ny)) {
-          this.revealTileRecursive(this.grid[ny][nx])
+          this.revealTileAndCheckForMine(nx, ny)
         }
       })
     }
+    return false
   }
+
+  
 
   private startNewGame() {
     this.generateGrid()
