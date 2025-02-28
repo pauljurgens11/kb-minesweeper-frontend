@@ -1,18 +1,23 @@
 <template>
-  <PopupMenu
-    :isOpen="!gameActive"
-    :options="[{ label: 'New Game', action: 'select' }]"
-    @select="startGame()"
-  />
+  <PopupMenu :isOpen="!gameActive" :options="[{ label: 'New Game' }]" @select="startGame()" />
 
   <div v-if="minesweeper" class="grid">
     <div v-for="row in minesweeper.grid" :key="row[0].y" class="row">
-      <div v-for="tile in row"
+      <div
+        v-for="tile in row"
         :key="tile.x"
-        class="tile" 
-        :class="{ 'cursor': cursor.x === tile.x && cursor.y === tile.y }"
-        @click="revealTile(tile.x, tile.y)">
-        {{ tile.state === TileState.Revealed ? (tile.hasMine ? '💣' : tile.adjacentMines) : ' ' }}
+        class="tile"
+        :class="{ cursor: cursor.x === tile.x && cursor.y === tile.y }"
+      >
+        {{
+          tile.state === TileState.Revealed
+            ? tile.hasMine
+              ? '💣'
+              : tile.adjacentMines
+            : tile.state === TileState.Flagged
+              ? '🚩'
+              : ' '
+        }}
       </div>
     </div>
   </div>
@@ -27,12 +32,27 @@ import { useTimer } from '@/composables/timer'
 import { TileState, type Tile } from '@/types/tileTypes'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
+const props = defineProps({
+  width: {
+    type: Number,
+    required: true,
+  },
+  height: {
+    type: Number,
+    required: true,
+  },
+  mines: {
+    type: Number,
+    required: true,
+  },
+})
+
 const minesweeper = ref<Minesweeper | null>(null)
 const { formattedTime, startTimer, stopTimer, resetTimer } = useTimer()
 
 let gameActive = true
 let startTimerOnNextClick = true
-const cursor = ref({x: 0, y: 0})
+const cursor = ref({ x: 0, y: 0 })
 
 onMounted(() => {
   try {
@@ -48,10 +68,9 @@ onBeforeUnmount(() => {
   stopTimer()
 })
 
-
 function startGame() {
   gameActive = true
-  minesweeper.value = new Minesweeper(10, 10, 15) // TODO:
+  minesweeper.value = new Minesweeper(props.width, props.height, props.mines)
   resetTimer()
 }
 
@@ -70,9 +89,18 @@ function revealTile(x: number, y: number) {
   }
 
   // End game if tile has a bomb or all tiles are cleared.
-  if (minesweeper.value!.revealTileAndCheckForMine(x, y) || minesweeper.value!.clearedTiles == 85) { // TODO:
+  if (
+    minesweeper.value!.clickTile(x, y, true) ||
+    minesweeper.value!.clearedTiles == props.width * props.height - props.mines
+  ) {
     endGame()
   }
+}
+
+function flagTile(x: number, y: number) {
+  if (!minesweeper || !gameActive) return
+
+  minesweeper.value!.flagTile(x, y)
 }
 
 // Handle cursor movement with arrow keys
@@ -84,18 +112,13 @@ function handleKeydown(event: KeyboardEvent) {
   switch (event.key) {
     case 'r':
       startGame()
-  }
-
-  if (!gameActive) return
-
-  switch (event.key) {
     case 'ArrowUp':
     case 'k':
       cursor.value.y = Math.max(0, cursor.value.y - 1)
       break
     case 'ArrowDown':
     case 'j':
-      cursor.value.y = Math.min(10 - 1, cursor.value.y + 1) // 10 is heigh TODO:
+      cursor.value.y = Math.min(props.height - 1, cursor.value.y + 1)
       break
     case 'ArrowLeft':
     case 'h':
@@ -103,7 +126,15 @@ function handleKeydown(event: KeyboardEvent) {
       break
     case 'ArrowRight':
     case 'l':
-      cursor.value.x = Math.min(10 - 1, cursor.value.x + 1) // 10 is width TODO:
+      cursor.value.x = Math.min(props.width - 1, cursor.value.x + 1)
+      break
+  }
+
+  if (!gameActive) return
+
+  switch (event.key) {
+    case 'f':
+      flagTile(cursor.value.x, cursor.value.y)
       break
     case ' ':
       revealTile(cursor.value.x, cursor.value.y)

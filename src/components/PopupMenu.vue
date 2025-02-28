@@ -1,10 +1,10 @@
 <template>
-  <div v-if="isOpen" @click.self="close">
+  <div v-if="isOpen">
     <div>
       <h2>Select an Option</h2>
 
       <!-- Render dynamic buttons based on the passed options prop -->
-      <button v-for="option in options" :key="option.label" @click="handleClick(option.action)">
+      <button v-for="option in options" :key="option.label" @click="handleClick()">
         {{ option.label }}
       </button>
     </div>
@@ -16,7 +16,6 @@ import { defineProps, defineEmits } from 'vue'
 
 interface PopupOption {
   label: string
-  action: string
 }
 
 defineProps<{
@@ -25,12 +24,12 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', action: string): void
+  (e: 'select'): void
   (e: 'close'): void
 }>()
 
-function handleClick(action: string) {
-  emit('select', action)
+function handleClick() {
+  emit('select')
 }
 
 function close() {

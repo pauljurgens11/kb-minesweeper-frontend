@@ -17,15 +17,44 @@ export class Minesweeper {
   public clearedTiles = 0
 
   public constructor(
-    private height: number,
     private width: number,
+    private height: number,
     private mineCount: number,
   ) {
     this.startNewGame()
   }
 
-  public revealTileAndCheckForMine(x: number, y: number): boolean {
+  /**
+   * Handle tile click.
+   *
+   * @param x coordinate
+   * @param y coordinate
+   * @param isUserClick whether the click was made by the user or a recursive cascade
+   * @returns true if the tile was a mine, false otherwise
+   */
+  public clickTile(x: number, y: number, isUserClick: boolean): boolean {
     let tile = this.grid[y][x]
+
+    // Reveal adjacent tiles when adjacent flags are set correctly.
+    if (
+      isUserClick &&
+      tile.state === TileState.Revealed &&
+      this.checkFlagNumberValidity(tile)
+    ) {
+
+      for (let [dx, dy] of DIRECTIONS) {
+        let nx: number = tile.x + dx
+        let ny: number = tile.y + dy
+
+        if (
+          this.coordinatesInRange(nx, ny) &&
+          this.grid[ny][nx].state === TileState.Hidden &&
+          this.clickTile(nx, ny, false)
+        ) {
+          return true
+        }
+      }
+    }
 
     if (tile.state === TileState.Hidden) {
       tile.state = TileState.Revealed
@@ -42,14 +71,22 @@ export class Minesweeper {
         let nx: number = tile.x + dx
         let ny: number = tile.y + dy
         if (this.coordinatesInRange(nx, ny)) {
-          this.revealTileAndCheckForMine(nx, ny)
+          this.clickTile(nx, ny, false)
         }
       })
     }
     return false
   }
 
-  
+  public flagTile(x: number, y: number) {
+    let tile = this.grid[y][x]
+
+    if (tile.state === TileState.Hidden) {
+      tile.state = TileState.Flagged
+    } else if (tile.state === TileState.Flagged) {
+      tile.state = TileState.Hidden
+    }
+  }
 
   private startNewGame() {
     this.generateGrid()
@@ -110,5 +147,28 @@ export class Minesweeper {
 
   private coordinatesInRange(x: number, y: number): boolean {
     return x >= 0 && x < this.width && y >= 0 && y < this.height
+  }
+
+  /**
+   * Check if number of adjacent flags is equal to number of adjacent mines.
+   * 
+   * NB! If adjacentMines number is 0, this method returns false.
+   *
+   * @returns true if the number of adjacent flags is equal to the number of
+   * adjacent mines.
+   */
+  private checkFlagNumberValidity(tile: Tile): boolean {
+    if (tile.adjacentMines == 0) return false
+
+    let numOfFlags = 0
+
+    DIRECTIONS.forEach(([dx, dy]) => {
+      let nx: number = tile.x + dx
+      let ny: number = tile.y + dy
+      if (this.coordinatesInRange(nx, ny) && this.grid[ny][nx].state === TileState.Flagged) {
+        numOfFlags += 1
+      }
+    })
+    return numOfFlags === tile.adjacentMines
   }
 }
