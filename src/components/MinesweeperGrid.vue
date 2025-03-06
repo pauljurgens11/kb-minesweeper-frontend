@@ -128,16 +128,17 @@ function handleKeydown(event: KeyboardEvent) {
     case 'l':
       cursor.value.x = Math.min(props.width - 1, cursor.value.x + 1)
       break
-  }
-
-  if (!gameActive) return
-
-  switch (event.key) {
     case 'f':
-      flagTile(cursor.value.x, cursor.value.y)
+      if (gameActive) {
+        flagTile(cursor.value.x, cursor.value.y)
+      }
       break
     case ' ':
-      revealTile(cursor.value.x, cursor.value.y)
+      if (gameActive) {
+        revealTile(cursor.value.x, cursor.value.y)
+      } else {
+        startGame()
+      }
       break
   }
 }
@@ -155,7 +156,8 @@ function handleKeydown(event: KeyboardEvent) {
 .tile {
   width: 30px;
   height: 30px;
-  border: 1px solid #ddd;
+  border: 1px solid #1c1c1c;
+  background-color: #daddd8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,7 +165,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 .tile.cursor {
-  border: 1px solid red;
-  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid orange;
+  background-color: #ecebe4;
 }
 </style>

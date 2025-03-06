@@ -36,12 +36,7 @@ export class Minesweeper {
     let tile = this.grid[y][x]
 
     // Reveal adjacent tiles when adjacent flags are set correctly.
-    if (
-      isUserClick &&
-      tile.state === TileState.Revealed &&
-      this.checkFlagNumberValidity(tile)
-    ) {
-
+    if (isUserClick && tile.state === TileState.Revealed && this.checkFlagNumberValidity(tile)) {
       for (let [dx, dy] of DIRECTIONS) {
         let nx: number = tile.x + dx
         let ny: number = tile.y + dy
@@ -151,7 +146,7 @@ export class Minesweeper {
 
   /**
    * Check if number of adjacent flags is equal to number of adjacent mines.
-   * 
+   *
    * NB! If adjacentMines number is 0, this method returns false.
    *
    * @returns true if the number of adjacent flags is equal to the number of

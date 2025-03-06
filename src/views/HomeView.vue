@@ -6,7 +6,7 @@
       <button @click="startGame('large')">Large</button>
     </div>
 
-    <div v-if="!showMenu">
+    <div v-if="!showMenu" class="center">
       <Grid :width="gridSize.width" :height="gridSize.height" :mines="gridSize.mines" />
       <button @click="goBackToMenu">Back to Menu</button>
     </div>
@@ -36,3 +36,13 @@ const goBackToMenu = () => {
   showMenu.value = true
 }
 </script>
+
+<style scoped>
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10vh;
+}
+</style>
