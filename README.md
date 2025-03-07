@@ -4,6 +4,13 @@ This repository contains a Minesweeper clone created using Vue JS and TypeScript
 
 ![Screenshot](src/assets/ui-screenshot.png)
 
+## Controls
+
+* Movement: arrow keys or hjkl
+* Click tile: space
+* Place flag: f
+* Restart: r
+
 ## Project Setup
 
 ```sh
