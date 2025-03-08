@@ -2,7 +2,7 @@
 
 This repository contains a Minesweeper clone created using Vue JS and TypeScript. The game can be played using your keyboard exclusively. **NB! This project is a work in progress.**
 
-![Screenshot](src/assets/ui-screenshot.png)
+![Screenshot](src/assets/example-gameplay.gif)
 
 ## Controls
 
