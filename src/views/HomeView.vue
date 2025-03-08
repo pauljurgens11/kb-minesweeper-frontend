@@ -3,40 +3,34 @@
     <div v-if="showMenu">
       <div class="grid-container">
         <div class="grid">
-          <button
-            class="btn"
-            :class="{ cursor: menuCursor.x === 0 && menuCursor.y === 0 }"
-          >
+          <button class="btn" :class="{ cursor: menuCursor.x === 0 && menuCursor.y === 0 }">
             small
           </button>
-          <button
-            class="btn"
-            :class="{ cursor: menuCursor.x === 1 && menuCursor.y === 0 }"
-          >
+          <button class="btn" :class="{ cursor: menuCursor.x === 1 && menuCursor.y === 0 }">
             medium
           </button>
-          <button
-            class="btn"
-            :class="{ cursor: menuCursor.x === 0 && menuCursor.y === 1 }"
-          >
+          <button class="btn" :class="{ cursor: menuCursor.x === 0 && menuCursor.y === 1 }">
             large
           </button>
-          <button
-            class="btn"
-            :class="{ cursor: menuCursor.x === 1 && menuCursor.y === 1 }"
-          >
+          <button class="btn" :class="{ cursor: menuCursor.x === 1 && menuCursor.y === 1 }">
             custom
           </button>
         </div>
       </div>
-      <p class="center">❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗</p>
     </div>
 
     <div v-if="!showMenu" class="center">
       <Grid :width="gridSize.width" :height="gridSize.height" :mines="gridSize.mines" />
-      <button @click="goBackToMenu">Back to Menu</button>
+      <button class="back-button" @click="goBackToMenu">
+        <span class="icon">←</span>
+        <!-- Simple Left Arrow Icon -->
+        Menu
+      </button>
     </div>
   </div>
+  <p class="center">
+    ❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗
+  </p>
 </template>
 
 <script setup lang="ts">
@@ -45,8 +39,8 @@ import Grid from '@/components/MinesweeperGrid.vue'
 
 let showMenu = ref(true)
 const menuCursor = ref({ x: 0, y: 0 })
-let gridHeight = 2;
-let gridWidth = 2;
+let gridHeight = 2
+let gridWidth = 2
 
 const gridSizes = {
   small: { width: 8, height: 8, mines: 10 },
@@ -144,9 +138,9 @@ function handleKeydown(event: KeyboardEvent) {
   width: 240px;
   height: 240px;
   font-size: 18px;
-  background-color: #FCFBF8;
+  background-color: #fcfbf8;
   color: black;
-  border: 1px solid #D1D1D1;
+  border: 1px solid #d1d1d1;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 2px 2px 14px rgba(0, 0, 0, 0.2);
@@ -154,7 +148,6 @@ function handleKeydown(event: KeyboardEvent) {
 
 .btn.cursor {
   border: 4px solid orange;
-  background-color: #FBF6EE;
+  background-color: #fbf6ee;
 }
-
 </style>

@@ -24,11 +24,7 @@
         Leaderboards
       </RouterLink>
 
-      <RouterLink
-        to="/about"
-        class="nav-button"
-        :class="{ 'no-hover': isActive('/about').value }"
-      >
+      <RouterLink to="/about" class="nav-button" :class="{ 'no-hover': isActive('/about').value }">
         About
       </RouterLink>
     </div>
@@ -36,15 +32,15 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import { computed } from "vue";
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
-const route = useRoute();
+const route = useRoute()
 
 const isActive = (path: string) => {
-  console.log("Current route:", route.path);
+  console.log('Current route:', route.path)
   return computed(() => route.path === path)
-};
+}
 </script>
 
 <style scoped>
