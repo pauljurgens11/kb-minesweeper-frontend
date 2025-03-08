@@ -8,12 +8,44 @@
     </RouterLink>
 
     <div class="header-right">
-      <RouterLink to="/tutorial" class="nav-button">Tutorial</RouterLink>
-      <RouterLink to="/leaderboards" class="nav-button">Leaderboards</RouterLink>
-      <RouterLink to="/about" class="nav-button">About</RouterLink>
+      <RouterLink
+        to="/tutorial"
+        class="nav-button"
+        :class="{ 'no-hover': isActive('/tutorial').value }"
+      >
+        Tutorial
+      </RouterLink>
+
+      <RouterLink
+        to="/leaderboards"
+        class="nav-button"
+        :class="{ 'no-hover': isActive('/leaderboards').value }"
+      >
+        Leaderboards
+      </RouterLink>
+
+      <RouterLink
+        to="/about"
+        class="nav-button"
+        :class="{ 'no-hover': isActive('/about').value }"
+      >
+        About
+      </RouterLink>
     </div>
   </header>
 </template>
+
+<script setup lang="ts">
+import { useRoute } from "vue-router";
+import { computed } from "vue";
+
+const route = useRoute();
+
+const isActive = (path: string) => {
+  console.log("Current route:", route.path);
+  return computed(() => route.path === path)
+};
+</script>
 
 <style scoped>
 .header {
@@ -98,5 +130,16 @@
   text-decoration: underline;
   text-underline-offset: 12px;
   text-decoration-thickness: 4px;
+}
+
+.no-hover {
+  pointer-events: none; /* Prevent hover interactions */
+}
+
+.no-hover:hover {
+  color: inherit !important;
+  transform: none !important;
+  text-decoration: none !important;
+  cursor: pointer;
 }
 </style>
