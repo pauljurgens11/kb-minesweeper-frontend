@@ -1,5 +1,5 @@
 <template>
-  <PopupMenu :isOpen="!gameActive" :options="[{ label: 'New Game' }]" @select="startGame()" />
+  <p v-if="!gameActive" class="top-center">Press 'r' to restart the game.</p>
 
   <div v-if="minesweeper" class="grid">
     <div v-for="row in minesweeper.grid" :key="row[0].y" class="row">
@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import PopupMenu from './PopupMenu.vue'
 import { Minesweeper } from '@/composables/minesweeper'
 import { useTimer } from '@/composables/timer'
 import { TileState, type Tile } from '@/types/tileTypes'
@@ -73,7 +72,7 @@ onBeforeUnmount(() => {
 
 const numberIcons = import.meta.glob('@/assets/tile_numbers/*.png', { eager: true })
 
-const getNumberIcon = (adjacentMines: number) => {
+const getNumberIcon = (adjacentMines: number): string => {
   return numberIcons[`/src/assets/tile_numbers/${adjacentMines}.png`]?.default || ''
 }
 
@@ -173,6 +172,7 @@ function handleKeydown(event: KeyboardEvent) {
   box-shadow:
     1px 1px 0 1px #d8d7d5 inset,
     -1px -1px 0 1px #b6b6b6 inset;
+  border-radius: 2px;
 }
 
 .tile.cursor {
@@ -189,5 +189,13 @@ function handleKeydown(event: KeyboardEvent) {
   width: 50%;
   height: 50%;
   object-fit: contain;
+}
+
+.top-center {
+  position: fixed;
+  top: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 </style>
