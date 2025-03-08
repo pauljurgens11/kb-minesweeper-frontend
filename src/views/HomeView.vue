@@ -23,14 +23,13 @@
       <Grid :width="gridSize.width" :height="gridSize.height" :mines="gridSize.mines" />
       <button class="back-button" @click="goBackToMenu">
         <span class="icon">←</span>
-        <!-- Simple Left Arrow Icon -->
         Menu
       </button>
     </div>
+    <p class="bottom-center">
+      ❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗
+    </p>
   </div>
-  <p class="center">
-    ❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗
-  </p>
 </template>
 
 <script setup lang="ts">
@@ -86,6 +85,12 @@ const goBackToMenu = () => {
 }
 
 function handleKeydown(event: KeyboardEvent) {
+  switch (event.key) {
+    case 'Escape':
+      goBackToMenu()
+      break
+  }
+
   if (!showMenu.value) return
 
   switch (event.key) {
@@ -119,6 +124,14 @@ function handleKeydown(event: KeyboardEvent) {
   align-items: center;
   justify-content: center;
   padding-top: 10vh;
+}
+
+.bottom-center {
+  position: fixed;
+  bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
 .grid-container {

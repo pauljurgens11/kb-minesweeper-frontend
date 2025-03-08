@@ -7,17 +7,20 @@
         v-for="tile in row"
         :key="tile.x"
         class="tile"
-        :class="{ cursor: cursor.x === tile.x && cursor.y === tile.y }"
+        :class="{
+          cursor: cursor.x === tile.x && cursor.y === tile.y,
+          revealed: tile.state === TileState.Revealed /* Add revealed class */,
+        }"
       >
-        {{
-          tile.state === TileState.Revealed
-            ? tile.hasMine
-              ? '💣'
-              : tile.adjacentMines
-            : tile.state === TileState.Flagged
-              ? '🚩'
-              : ' '
-        }}
+        <template v-if="tile.state === TileState.Revealed">
+          <span v-if="tile.hasMine">💣</span>
+          <img
+            v-else-if="tile.adjacentMines > 0"
+            :src="getNumberIcon(tile.adjacentMines)"
+            :alt="`${tile.adjacentMines}`"
+          />
+        </template>
+        <span v-else-if="tile.state === TileState.Flagged">🚩</span>
       </div>
     </div>
   </div>
@@ -67,6 +70,12 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown)
   stopTimer()
 })
+
+const numberIcons = import.meta.glob('@/assets/tile_numbers/*.png', { eager: true })
+
+const getNumberIcon = (adjacentMines: number) => {
+  return numberIcons[`/src/assets/tile_numbers/${adjacentMines}.png`]?.default || ''
+}
 
 function startGame() {
   gameActive = true
@@ -154,18 +163,31 @@ function handleKeydown(event: KeyboardEvent) {
   gap: 1px;
 }
 .tile {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #1c1c1c;
-  background-color: #daddd8;
+  width: 36px;
+  height: 36px;
+  background-color: #fcfbf8;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  box-shadow:
+    1px 1px 0 1px #d8d7d5 inset,
+    -1px -1px 0 1px #b6b6b6 inset;
 }
 
 .tile.cursor {
-  border: 1px solid orange;
-  background-color: #ecebe4;
+  box-shadow: 0 0 0 2px orange inset !important;
+  background-color: #e7e4cf !important;
+}
+
+.tile.revealed {
+  background-color: #ebe8e8;
+  box-shadow: 0 0 0 2px #bdbcbb inset;
+}
+
+.tile img {
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
 }
 </style>
