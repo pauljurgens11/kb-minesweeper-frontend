@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div>{{ formattedTime }}</div>
+  <div class="timer">{{ formattedTime }}</div>
 </template>
 
 <script setup lang="ts">
@@ -120,6 +120,7 @@ function handleKeydown(event: KeyboardEvent) {
   switch (event.key) {
     case 'r':
       startGame()
+      break
     case 'ArrowUp':
     case 'k':
       cursor.value.y = Math.max(0, cursor.value.y - 1)
@@ -197,5 +198,14 @@ function handleKeydown(event: KeyboardEvent) {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
+}
+
+.timer {
+  font-size: 2rem; /* Increase font size for readability */
+  font-weight: bold;
+  color: black; /* White text */
+  padding: 10px 20px;
+  text-align: center;
+  min-width: 100px; /* Ensures consistent width */
 }
 </style>

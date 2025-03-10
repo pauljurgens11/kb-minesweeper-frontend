@@ -4,16 +4,23 @@
       <div class="grid-container">
         <div class="grid">
           <button class="btn" :class="{ cursor: menuCursor.x === 0 && menuCursor.y === 0 }">
-            small
+            <div class="main-text">small</div>
+            <div class="sub-text">8x8</div>
+            <div class="sub-text">10 mines</div>
           </button>
           <button class="btn" :class="{ cursor: menuCursor.x === 1 && menuCursor.y === 0 }">
-            medium
+            <div class="main-text">medium</div>
+            <div class="sub-text">16x16</div>
+            <div class="sub-text">40 mines</div>
           </button>
           <button class="btn" :class="{ cursor: menuCursor.x === 0 && menuCursor.y === 1 }">
-            large
+            <div class="main-text">large</div>
+            <div class="sub-text">30x16</div>
+            <div class="sub-text">99 mines</div>
           </button>
           <button class="btn" :class="{ cursor: menuCursor.x === 1 && menuCursor.y === 1 }">
-            custom
+            <div class="main-text">custom</div>
+            <div class="sub-text">coming soon</div>
           </button>
         </div>
       </div>
@@ -123,7 +130,7 @@ function handleKeydown(event: KeyboardEvent) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 10vh;
+  height: 80vh;
 }
 
 .bottom-center {
@@ -162,5 +169,18 @@ function handleKeydown(event: KeyboardEvent) {
 .btn.cursor {
   border: 4px solid orange;
   background-color: #fbf6ee;
+}
+
+.main-text {
+  color: black;
+  font-size: 22px;
+  text-align: left;
+  padding-left: 56px;
+}
+
+.sub-text {
+  color: #949494;
+  text-align: left;
+  padding-left: 56px;
 }
 </style>
