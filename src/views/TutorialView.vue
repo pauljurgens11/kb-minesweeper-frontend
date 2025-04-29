@@ -5,14 +5,14 @@
 </template>
 
 <style scoped>
-.center-container {
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center; /* Centers vertically */
-  height: 80vh; /* Adjust as needed */
-}
+  .center-container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 80vh; /* Adjust as needed */
+  }
 
-.tutorial-img {
-  width: 50%;
-}
+  .tutorial-img {
+    width: 50%;
+  }
 </style>

@@ -5,9 +5,9 @@ export enum TileState {
 }
 
 export interface Tile {
-  x: number
-  y: number
-  hasMine: boolean
-  state: TileState
-  adjacentMines: number
+  x: number;
+  y: number;
+  hasMine: boolean;
+  state: TileState;
+  adjacentMines: number;
 }

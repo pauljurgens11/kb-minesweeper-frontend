@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import Header from './components/Header.vue'
+  import { RouterView } from 'vue-router';
+  import Header from './components/Header.vue';
 </script>
 
 <template>
@@ -9,8 +9,8 @@ import Header from './components/Header.vue'
 </template>
 
 <style>
-body {
-  font-family: 'Lato', serif;
-  background-color: #f0eeeb;
-}
+  body {
+    font-family: 'Lato', serif;
+    background-color: #f0eeeb;
+  }
 </style>
