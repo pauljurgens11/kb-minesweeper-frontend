@@ -183,7 +183,6 @@
     display: grid;
     grid-template-columns: repeat(var(--cols), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
-    gap: 1px;
     aspect-ratio: calc(var(--cols) / var(--rows));
     width: min(80vw, calc(60vh * (var(--cols) / var(--rows))));
   }
