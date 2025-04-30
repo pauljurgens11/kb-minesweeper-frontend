@@ -189,10 +189,10 @@
   .back-button {
     position: absolute;
     left: 110px;
-    top: 128px;
+    top: 116px;
 
     font-family: inherit;
-    font-size: 24px;
+    font-size: 20px;
     color: #726f6f;
     background: none;
     border: none;
