@@ -10,7 +10,7 @@ export function useTimer() {
     stopTimer();
     startTime = performance.now();
     timerInterval = setInterval(() => {
-      time.value = performance.now() - startTime;
+      time.value = Math.floor(performance.now() - startTime);
     }, 10);
   }
 
