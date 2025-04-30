@@ -1,4 +1,6 @@
 <template>
+  <Analytics />
+  <SpeedInsights />
   <div v-if="isMobile">
     <MobileWarning />
   </div>
@@ -9,6 +11,9 @@
 </template>
 
 <script setup lang="ts">
+  import { Analytics } from '@vercel/analytics/vue';
+  import { SpeedInsights } from '@vercel/speed-insights/vue';
+
   import { RouterView } from 'vue-router';
   import Header from './components/Header.vue';
   import { onMounted, onUnmounted, ref } from 'vue';
