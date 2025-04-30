@@ -1,12 +1,34 @@
+<template>
+  <div v-if="isMobile">
+    <MobileWarning />
+  </div>
+  <div v-else>
+    <Header />
+    <RouterView />
+  </div>
+</template>
+
 <script setup lang="ts">
   import { RouterView } from 'vue-router';
   import Header from './components/Header.vue';
-</script>
+  import { onMounted, onUnmounted, ref } from 'vue';
+  import MobileWarning from './components/MobileWarning.vue';
 
-<template>
-  <Header />
-  <RouterView />
-</template>
+  const isMobile = ref(window.innerWidth < 768);
+
+  const checkIsMobile = () => {
+    isMobile.value = window.innerWidth < 768;
+  };
+
+  onMounted(() => {
+    window.addEventListener('resize', checkIsMobile);
+    checkIsMobile();
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', checkIsMobile);
+  });
+</script>
 
 <style>
   body {

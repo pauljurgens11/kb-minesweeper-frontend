@@ -1,51 +1,42 @@
 <template>
   <div v-if="minesweeper" class="grid">
-    <div v-for="row in minesweeper.grid" :key="row[0].y" class="row">
-      <div
-        v-for="tile in row"
-        :key="tile.x"
-        class="tile"
-        :class="{
-          cursor: cursor.x === tile.x && cursor.y === tile.y,
-          revealed: tile.state === TileState.Revealed /* Add revealed class */,
-        }"
-      >
-        <template v-if="tile.state === TileState.Revealed">
-          <span v-if="tile.hasMine">💣</span>
-          <img
-            v-else-if="tile.adjacentMines > 0"
-            :src="getNumberIcon(tile.adjacentMines)"
-            :alt="`${tile.adjacentMines}`"
-          />
-        </template>
-        <span v-else-if="tile.state === TileState.Flagged">🚩</span>
-      </div>
+    <div
+      v-for="(tile, index) in minesweeper.grid.flatMap((row) => row)"
+      :key="`${tile.x}-${tile.y}`"
+      class="tile"
+      :class="{
+        cursor: cursor.x === tile.x && cursor.y === tile.y,
+        revealed: tile.state === TileState.Revealed,
+      }"
+    >
+      <template v-if="tile.state === TileState.Revealed">
+        <span v-if="tile.hasMine">💣</span>
+        <img
+          v-else-if="tile.adjacentMines > 0"
+          :src="getNumberIcon(tile.adjacentMines)"
+          :alt="`${tile.adjacentMines}`"
+        />
+      </template>
+      <span v-else-if="tile.state === TileState.Flagged">🚩</span>
     </div>
   </div>
 
   <div class="timer">{{ formattedTime }}</div>
 
-  <div id="best-times-container">
-    <h3>Best Times</h3>
-    <ul id="best-times">
-      <li v-if="bestTimes.length === 0">No times yet!</li>
-      <li
-        v-for="(time, index) in bestTimes"
-        :key="index"
-        :class="{ 'new-entry': time === newBestTime }"
-      >
-        <span class="rank">{{ index + 1 }}.</span>
-        <span class="time">{{ formatTime(time) }}</span>
-      </li>
-    </ul>
-  </div>
+  <BestTimesList
+    ref="bestTimesRef"
+    :width="props.width"
+    :height="props.height"
+    :mines="props.mines"
+  />
 </template>
 
 <script setup lang="ts">
   import { Minesweeper } from '@/composables/minesweeper';
   import { useTimer } from '@/composables/timer';
-  import { TileState, type Tile } from '@/types/tileTypes';
-  import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+  import { TileState } from '@/types/tileTypes';
+  import { ref, onMounted, onBeforeUnmount, watchEffect } from 'vue';
+  import BestTimesList from './BestTimesList.vue';
 
   const props = defineProps({
     width: {
@@ -62,20 +53,23 @@
     },
   });
 
+  watchEffect(() => {
+    document.documentElement.style.setProperty('--cols', props.width.toString());
+    document.documentElement.style.setProperty('--rows', props.height.toString());
+  });
+
   const minesweeper = ref<Minesweeper | null>(null);
   const { time, formattedTime, startTimer, stopTimer, resetTimer } = useTimer();
 
   let gameActive = true;
   let startTimerOnNextClick = true;
   const cursor = ref({ x: 0, y: 0 });
-  const bestTimes = ref<number[]>([]);
-  // Last value that got added to the best times list
-  const newBestTime = ref<number | null>(null);
+
+  const bestTimesRef = ref<InstanceType<typeof BestTimesList> | null>(null);
 
   onMounted(() => {
     try {
       startGame();
-      loadBestTimes();
       window.addEventListener('keydown', handleKeydown);
     } catch (error) {
       console.error('Error initializing Minesweeper:', error);
@@ -87,7 +81,9 @@
     stopTimer();
   });
 
-  const numberIcons = import.meta.glob('@/assets/tile_numbers/*.png', { eager: true });
+  const numberIcons = import.meta.glob<{ default: string }>('@/assets/tile_numbers/*.png', {
+    eager: true,
+  });
 
   const getNumberIcon = (adjacentMines: number): string => {
     return numberIcons[`/src/assets/tile_numbers/${adjacentMines}.png`]?.default || '';
@@ -107,34 +103,7 @@
 
     if (!isWin) return;
 
-    let bestTimes: number[] = JSON.parse(
-      localStorage.getItem(`bestTimes-${props.width}-${props.height}-${props.mines}`) || '[]'
-    );
-
-    bestTimes.push(timeValue);
-    bestTimes.sort((a, b) => a - b);
-
-    bestTimes = bestTimes.slice(0, 10);
-
-    localStorage.setItem(
-      `bestTimes-${props.width}-${props.height}-${props.mines}`,
-      JSON.stringify(bestTimes)
-    );
-
-    loadBestTimes();
-    newBestTime.value = timeValue;
-  }
-
-  function formatTime(ms: number): string {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = ((ms % 60000) / 1000).toFixed(3);
-    return `${minutes}:${seconds.padStart(6, '0')}`;
-  }
-
-  function loadBestTimes() {
-    bestTimes.value = JSON.parse(
-      localStorage.getItem(`bestTimes-${props.width}-${props.height}-${props.mines}`) || '[]'
-    );
+    bestTimesRef.value?.newTimeEntry(timeValue);
   }
 
   function revealTile(x: number, y: number) {
@@ -205,17 +174,21 @@
 </script>
 
 <style scoped>
+  :root {
+    --cols: 1;
+    --rows: 1;
+  }
+
   .grid {
     display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
     gap: 1px;
-  }
-  .row {
-    display: flex;
-    gap: 1px;
+    aspect-ratio: calc(var(--cols) / var(--rows));
+    width: min(80vw, calc(60vh * (var(--cols) / var(--rows))));
   }
   .tile {
-    width: 36px;
-    height: 36px;
+    aspect-ratio: 1/1;
     background-color: #fcfbf8;
     display: flex;
     align-items: center;
@@ -225,6 +198,7 @@
       1px 1px 0 1px #d8d7d5 inset,
       -1px -1px 0 1px #b6b6b6 inset;
     border-radius: 2px;
+    font-size: calc(33vh / var(--rows) * 0.8);
   }
 
   .tile.cursor {
@@ -248,64 +222,8 @@
     font-weight: bold;
     color: black;
     padding: 10px 20px;
+    margin-top: 10px;
     text-align: center;
     min-width: 100px;
-  }
-
-  #best-times-container {
-    position: absolute;
-    height: 400px;
-    right: 100px;
-    padding: 16px;
-    margin-bottom: 64px;
-    background-color: #f4f1de;
-    border-radius: 12px;
-    box-shadow: 0 0 0 2px orange inset !important;
-  }
-
-  #best-times-container h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    margin-right: 32px;
-    font-size: 2rem;
-    text-align: left;
-    color: rgb(52, 50, 50);
-  }
-
-  #best-times {
-    padding: 0;
-    margin: 0;
-  }
-
-  #best-times li {
-    display: grid;
-    grid-template-columns: 2em auto;
-    column-gap: 0.5em;
-    padding: 4px 0;
-    font-size: 20px;
-    color: #333;
-    font-family: monospace; /* makes alignment precise */
-  }
-
-  .new-entry {
-    color: red;
-    font-size: 20px;
-    animation: flash 1s ease-in-out 5;
-    will-change: transform;
-  }
-
-  @keyframes flash {
-    0% {
-      transform: scale(1);
-      color: #333;
-    }
-    50% {
-      transform: scale(1.05);
-      color: red;
-    }
-    100% {
-      transform: scale(1);
-      color: #333;
-    }
   }
 </style>

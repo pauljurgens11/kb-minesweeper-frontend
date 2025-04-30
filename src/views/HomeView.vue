@@ -33,9 +33,11 @@
         back to main menu
       </button>
     </div>
-    <p class="bottom-center">
-      ❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗
-    </p>
+    <div v-if="showMenu">
+      <p class="bottom-center">
+        ❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗
+      </p>
+    </div>
   </div>
 </template>
 
@@ -145,7 +147,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 12vh;
+    padding-top: 14vh;
   }
 
   .grid {
@@ -155,8 +157,8 @@
   }
 
   .btn {
-    width: 240px;
-    height: 240px;
+    width: 200px;
+    height: 200px;
     font-size: 18px;
     background-color: #fcfbf8;
     color: black;
@@ -175,19 +177,19 @@
     color: black;
     font-size: 22px;
     text-align: left;
-    padding-left: 56px;
+    padding-left: 36px;
   }
 
   .sub-text {
     color: #949494;
     text-align: left;
-    padding-left: 56px;
+    padding-left: 36px;
   }
 
   .back-button {
     position: absolute;
-    left: 150px;
-    top: 170px;
+    left: 110px;
+    top: 128px;
 
     font-family: inherit;
     font-size: 24px;

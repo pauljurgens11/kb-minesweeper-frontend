@@ -4,11 +4,13 @@ export function useTimer() {
   const time = ref(0);
   let timerInterval: ReturnType<typeof setInterval> | null = null;
 
+  let startTime: number;
+
   function startTimer() {
     stopTimer();
-    time.value = 0;
+    startTime = performance.now();
     timerInterval = setInterval(() => {
-      time.value += 10;
+      time.value = performance.now() - startTime;
     }, 10);
   }
 
