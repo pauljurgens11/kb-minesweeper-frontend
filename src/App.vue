@@ -14,7 +14,6 @@
     <div id="donate-text">buy me a cheeseburger 🍔</div>
     <div id="donate-button"></div>
   </div>
-
 </template>
 
 <script setup lang="ts">
@@ -36,7 +35,7 @@
     window.addEventListener('resize', checkIsMobile);
     checkIsMobile();
     const script = document.createElement('script');
-    script.src = "https://www.paypalobjects.com/donate/sdk/donate-sdk.js";
+    script.src = 'https://www.paypalobjects.com/donate/sdk/donate-sdk.js';
     script.onload = () => {
       // @ts-ignore
       PayPal.Donation.Button({
@@ -46,7 +45,7 @@
           src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif',
           alt: 'Donate with PayPal button',
           title: 'PayPal - The safer, easier way to pay online!',
-        }
+        },
       }).render('#donate-button');
     };
     document.body.appendChild(script);
@@ -84,12 +83,10 @@
     color: #444;
     font-weight: 600;
     pointer-events: auto; /* allow selecting text */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   #donate-button {
     pointer-events: auto; /* so the PayPal button is clickable */
   }
-
-
 </style>

@@ -16,12 +16,8 @@
         Tutorial
       </RouterLink>
 
-      <RouterLink
-        to="/leaderboards"
-        class="nav-button"
-        :class="{ 'no-hover': isActive('/leaderboards').value }"
-      >
-        Leaderboards
+      <RouterLink to="/blog" class="nav-button" :class="{ 'no-hover': isActive('/blog').value }">
+        Blog
       </RouterLink>
 
       <RouterLink to="/about" class="nav-button" :class="{ 'no-hover': isActive('/about').value }">
@@ -88,7 +84,7 @@
     margin-left: 15px;
     padding: 0.5rem 1rem;
     color: #a5aab4;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 500;
     text-decoration: none;
     position: relative;
