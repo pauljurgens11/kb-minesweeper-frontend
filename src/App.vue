@@ -63,13 +63,6 @@
     background-color: #f0eeeb;
   }
 
-  #donate-button-container {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 9999;
-  }
-
   #donate-button-wrapper {
     position: fixed;
     right: 20px;
@@ -92,6 +85,10 @@
     font-weight: 600;
     pointer-events: auto; /* allow selecting text */
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  #donate-button {
+    pointer-events: auto; /* so the PayPal button is clickable */
   }
 
 
