@@ -1,12 +1,14 @@
 <template>
   <Analytics />
   <SpeedInsights />
-  <div v-if="isMobile">
+
+  <!-- Full site always rendered -->
+  <Header />
+  <RouterView />
+
+  <!-- Mobile overlay shown on top -->
+  <div class="mobile-overlay" v-show="isMobile">
     <MobileWarning />
-  </div>
-  <div v-else>
-    <Header />
-    <RouterView />
   </div>
 
   <!-- Donate button -->
