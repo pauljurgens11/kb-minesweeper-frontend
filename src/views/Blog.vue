@@ -30,14 +30,17 @@
         <li><strong>Arrow keys:</strong> Move the cursor around the board.</li>
         <li><strong>Space / Enter:</strong> Uncover a tile.</li>
         <li><strong>F or Shift+Space (example):</strong> Place or remove a flag.</li>
-        <li><strong>Chord action:</strong> Clear around a numbered tile when all required flags are placed.</li>
+        <li>
+          <strong>Chord action:</strong> Clear around a numbered tile when all required flags are
+          placed.
+        </li>
       </ul>
 
       <h3>Why Play Minesweeper Without a Mouse?</h3>
       <p>
         Keyboard play is faster than mouse play because it removes movement distance, reduces input
-        delay, and allows more precise interactions. Many expert players prefer keyboard controls for
-        competitive play.
+        delay, and allows more precise interactions. Many expert players prefer keyboard controls
+        for competitive play.
       </p>
 
       <h3>Is Mouse-Free Minesweeper Harder?</h3>
@@ -46,7 +49,6 @@
         faster clear times and greater accuracy after switching to keyboard-only controls.
       </p>
     </section>
-
 
     <section>
       <h2>Common Minesweeper Patterns</h2>
@@ -128,40 +130,44 @@
   </main>
 </template>
 
+<script setup>
+  onMounted(() => {
+    const ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do you play Minesweeper without a mouse?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'You can play Minesweeper entirely with keyboard controls by using arrow keys to navigate, space or enter to uncover tiles, and a flagging key to mark mines.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What are the keyboard controls for Minesweeper?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Arrow keys move the cursor, space or enter uncovers a tile, and a dedicated key flags mines. Many versions also support chord actions for faster clearing.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Why do expert players use keyboard controls in Minesweeper?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Keyboard controls reduce movement delay and increase precision, allowing expert players to clear boards much faster than with mouse controls.',
+          },
+        },
+      ],
+    });
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How do you play Minesweeper without a mouse?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "You can play Minesweeper entirely with keyboard controls by using arrow keys to navigate, space or enter to uncover tiles, and a flagging key to mark mines."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What are the keyboard controls for Minesweeper?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Arrow keys move the cursor, space or enter uncovers a tile, and a dedicated key flags mines. Many versions also support chord actions for faster clearing."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why do expert players use keyboard controls in Minesweeper?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Keyboard controls reduce movement delay and increase precision, allowing expert players to clear boards much faster than with mouse controls."
-      }
-    }
-  ]
-}
+    document.head.appendChild(ld);
+  });
 </script>
-
 
 <style scoped>
   .blog {
