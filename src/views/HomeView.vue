@@ -38,6 +38,17 @@
         ❗ Use keyboard to move between tiles. Check the tutorial page for more info. ❗
       </p>
     </div>
+    <div v-if="showMenu" class="seo-bottom">
+  <details>
+    <summary>About Keyboard Minesweeper</summary>
+    <p>
+      Keyboard Minesweeper is a modern, fast version of the classic puzzle game designed 
+      for keyboard-only controls. Navigate the board without a mouse using arrow keys, 
+      uncover tiles using Space or Enter, and use shortcuts to flag mines with precision.
+    </p>
+  </details>
+</div>
+
   </div>
 </template>
 
@@ -137,7 +148,7 @@
 
   .bottom-center {
     position: fixed;
-    bottom: 64px;
+    bottom: 128px;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -209,4 +220,33 @@
   .back-button:active {
     background-color: rgba(0, 0, 0, 0.1);
   }
+
+  .seo-bottom {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  max-width: 700px;
+}
+
+.seo-bottom details {
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.seo-bottom summary {
+  outline: none;
+}
+
+.seo-bottom p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.4;
+  padding: 0 12px;
+}
+
+
 </style>
